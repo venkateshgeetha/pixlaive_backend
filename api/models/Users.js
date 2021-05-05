@@ -42,4 +42,6 @@ const user_schema = new mongoose.Schema({
     updated_At : {
         type : Date
     }
-})
+});
+
+module.exports = mongoose.model(user_schema,"user_schema")
