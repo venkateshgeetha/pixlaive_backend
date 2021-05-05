@@ -1,4 +1,5 @@
 
+
 exports.signup = (req,res,next) => {
     console.log("signup");
     try{
