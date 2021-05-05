@@ -2,7 +2,7 @@ var mongoconnect = require("./api/db/database")
 var createError = require('http-errors');
 var express = require('express');
 var app = express();
-
+var userRouter = require("./api/routes/user.routes")
 var timeout = require('connect-timeout');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -25,7 +25,8 @@ function connectDatabase(){
     return new mongoconnect().connectToDb();
 }
 
-
+// router
+app.use('/api/user',userRouter);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');

@@ -34,4 +34,4 @@ const checkParam = (id) => {
         .exists()
 }
 
-module.exports = {validateRequest}
+module.exports = {validateRequest,checkRequestBodyParams,checkQuery,checkParam}
