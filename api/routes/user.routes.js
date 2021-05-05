@@ -5,7 +5,13 @@ const {checkRequestBodyParams , validateRequest} = require("../middlewares/valid
 
 
 router.post('/signup',
+        checkRequestBodyParams('username'),
         checkRequestBodyParams('email'),
+        checkRequestBodyParams('password'),
+        checkRequestBodyParams('confirm_password'),
+        checkRequestBodyParams('phone'),
+        checkRequestBodyParams('first_name'),
+        checkRequestBodyParams('last_name'),
         validateRequest,
         signup
 )
