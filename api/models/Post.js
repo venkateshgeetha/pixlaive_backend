@@ -10,7 +10,7 @@ const postSchema = new mongoose.Schema({
   user_id: {
     type: String,
   },
-  Url: {
+  url: {
     type: String,
   },
   created_at: {
