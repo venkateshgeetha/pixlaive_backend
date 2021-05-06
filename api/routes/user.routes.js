@@ -3,7 +3,7 @@ const { signup } = require("../controllers/User");
 const router = express.Router();
 const {checkRequestBodyParams , validateRequest} = require("../middlewares/validator")
 
-
+//signup
 router.post('/signup',
         checkRequestBodyParams('username'),
         checkRequestBodyParams('email'),

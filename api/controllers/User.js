@@ -1,6 +1,8 @@
 const moment = require('moment');
-const { now } = require('mongoose');
 const Users = require('../models/Users');
+const bcrypt = require('bcrypt');
+const { SendEmailVerificationLink } = require('../helpers/UniversalFunctions');
+
 
 exports.signup = async(req,res,next) => {
     
@@ -65,10 +67,11 @@ exports.signup = async(req,res,next) => {
                 created_At : Date.now()
             };
 
-            const data = new Users(userData);
+            const data = new Users(userData);            
             const saveData = await data.save();
             if(saveData)
             {
+                SendEmailVerificationLink(otp,req,saveData);
                 return res.json({
                     success: true,
                     message: 'OTP sent successfully to your email'
