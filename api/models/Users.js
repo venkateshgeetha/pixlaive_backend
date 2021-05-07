@@ -3,28 +3,36 @@ const mongoose = require("mongoose");
 const user_schema = new mongoose.Schema({
 
     username : {
-        type : String
+        type : String,
+        default : ''
     },
     first_name : {
-        type : String
+        type : String,
+        default : ''
     },
     last_name : {
-        type : String
+        type : String,
+        default : ''
     },
     email : {
-        type : String
+        type : String,
+        default : ''
     },
     password : {
-        type : String
+        type : String,
+        default : ''
     },
     country_code : {
-        type : String
+        type : String,
+        default : ''
     },
     phone : {
-        type : Number
+        type : String,
+        default : ''
     },
     otp : {
-        type : String
+        type : String,
+        default : ''
     },
     otp_verified  : {
         type : Boolean,
