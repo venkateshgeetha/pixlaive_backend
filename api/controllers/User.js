@@ -95,3 +95,112 @@ exports.signup = async(req,res,next) => {
 
         
 }
+
+exports.verifyOtp = async(req,res,next) => {
+
+    try {
+        let {user_id,otp} = req.body;
+        //getUserInfo
+        const getUserInfo = await Users.findById({_id : user_id});
+        console.log(getUserInfo);
+        let otpExpirationTime = getUserInfo.otpExpirationTime;
+        console.log(otpExpirationTime);
+        if(moment().isBefore(otpExpirationTime, 'second'))
+        {
+            console.log('inside time');
+            if(otp == getUserInfo.otp)
+            {
+                console.log('inside otp');
+                const updateData = await Users.findByIdAndUpdate(
+                    {_id:user_id},
+                    {
+                        $set : {
+                            otp : '',
+                            otp_verified : true,
+                            otpExpirationTime : ''
+                        }
+                    },
+                    {new : true}
+                );
+                if(updateData)
+                {
+                    return res.json({
+                        success: true,
+                        message: 'Account registered successfully!'
+                    });
+                }
+                else
+                {
+                    return res.json({
+                        success: false,
+                        message: 'Error occured!'
+                    }); 
+                }
+            }
+            else
+            {
+                return res.json({
+                    success: false,
+                    message: 'Entered OTP is incorrect'
+                });
+            }
+        }
+        else
+        {
+            return res.json({
+                success: false,
+                message: 'Entered OTP has been expired'
+            });
+        }
+
+    } 
+    catch (error) {
+        return res.json({
+            success: false,
+            message: 'Error occured!'
+        });
+    }
+}
+
+exports.resendotp = async(req,res,next) => {
+
+    try 
+    {
+        let {user_id} = req.body;
+        let otp = Math.floor(1000 + Math.random() * 9000);
+        let otpExpirationTime = moment().add(5, 'm');
+        console.log(otpExpirationTime);
+        //findUserAndUpdate
+        const findUserAndUpdate  = await Users.findByIdAndUpdate(
+            {_id : user_id},
+            {
+                $set : {
+                    otp : otp,
+                    otpExpirationTime : otpExpirationTime.toISOString()
+                }
+            },
+            {new : true}
+        );
+        if(findUserAndUpdate)
+        {
+            SendEmailVerificationLink(otp,req,findUserAndUpdate);
+            return res.json({
+                success: true,
+                message: 'New OTP sent successfully to your email'
+            });
+        }     
+        else
+        {
+            return res.json({
+                success: false,
+                message: 'Error occured!'
+            });
+        }
+    } 
+    catch (error) {
+        return res.json({
+            success: false,
+            message: 'Error occured!'
+        });
+    }
+}

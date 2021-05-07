@@ -1,5 +1,5 @@
 const express = require("express");
-const { signup } = require("../controllers/User");
+const { signup, verifyOtp, resendotp } = require("../controllers/User");
 const router = express.Router();
 const {checkRequestBodyParams , validateRequest} = require("../middlewares/validator")
 
@@ -15,5 +15,18 @@ router.post('/signup',
         validateRequest,
         signup
 )
+
+router.post('/verify_otp',
+        checkRequestBodyParams('otp'),
+        checkRequestBodyParams('user_id'),
+        validateRequest,
+        verifyOtp
+        )
+
+router.post('/resendotp',
+        checkRequestBodyParams('user_id'),
+        validateRequest,
+        resendotp
+        )
 
 module.exports = router

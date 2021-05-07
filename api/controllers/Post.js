@@ -3,8 +3,8 @@ const postSchema = require("../models/Post");
 exports.create_post = async (req, res, next) => {
   console.log(process.env.JWT_KEY);
   try {
-    var { image, body, thumbnail, user_id } = req.body;
-    const updateFavourtie = postSchema({
+    let { image, body, thumbnail, user_id } = req.body;
+    const updateFavourtie = new postSchema({
       thumbnail: thumbnail,
       image: image,
       body: body,
@@ -14,12 +14,15 @@ exports.create_post = async (req, res, next) => {
 
     const saveData = await updateFavourtie.save();
 
-    if (saveData) {
+    if (saveData) 
+    {
       return res.json({
         success: true,
         message: "Post added",
       });
-    } else {
+    } 
+    else 
+    {
       return res.json({
         success: false,
         message: "Error adding post",
@@ -36,17 +39,17 @@ exports.create_post = async (req, res, next) => {
 exports.get_post = async (req, res, next) => {
   console.log("enter");
   try {
-    const id = req.params.id;
-    console.log(id);
+    const post_id = req.params.post_id;
+    console.log(post_id);
 
-    if (id == undefined) {
+    if (post_id == undefined) {
       return res.json({
         success: false,
         message: "Please insert post id!",
       });
     }
 
-    const userPost = await postSchema.findOne({ _id: id });
+    const userPost = await postSchema.findOne({ _id: post_id });
     console.log(userPost);
     if (userPost) {
       return res.json({
@@ -69,13 +72,13 @@ exports.get_post = async (req, res, next) => {
 
 exports.user_posts = async (req, res, next) => {
   try {
-    const user_id = req.params.id;
+    const user_id = req.params.user_id;
     console.log(user_id);
 
     if (user_id == undefined) {
       return res.json({
         success: false,
-        message: "Please insert post id!",
+        message: "Please insert user id!",
       });
     }
 
@@ -103,17 +106,17 @@ exports.user_posts = async (req, res, next) => {
 exports.delete_post = async (req, res, next) => {
   console.log(req.body);
   try {
-    const id = req.body.id;
-    console.log(id);
+    const post_id = req.body.post_id;
+    console.log(post_id);
 
-    if (id == undefined) {
+    if (post_id == undefined) {
       return res.json({
         success: false,
         message: "Please insert post id!",
       });
     }
 
-    const userPost = await postSchema.findOneAndDelete({ _id: id });
+    const userPost = await postSchema.findOneAndDelete({ _id: post_id });
     console.log(userPost);
     if (userPost) {
       return res.json({
