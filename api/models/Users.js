@@ -41,6 +41,14 @@ const user_schema = new mongoose.Schema({
     otpExpirationTime : {
         type : String
     },
+    followersCount : {
+        type : Number,
+        default: 0
+    },
+    followingCount : {
+        type : Number,
+        default: 0
+    },
     gcm_token : {
         type : String
     },
