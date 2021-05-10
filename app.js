@@ -10,6 +10,7 @@ var logger = require("morgan");
 var bodyParser = require("body-parser");
 var cors = require("cors");
 var postRouter = require("./api/routes/post.routes");
+const follow_unfollowRouter = require("./api/routes/follow_unfollow");
 
 app.use(timeout("20s"));
 
@@ -26,8 +27,9 @@ function connectDatabase() {
 }
 
 // router
-app.use("/api/user", userRouter);
+app.use('/api/user', userRouter);
 app.use("/api/posts", postRouter);
+app.use('/api/follow_unfollow',follow_unfollowRouter);
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
