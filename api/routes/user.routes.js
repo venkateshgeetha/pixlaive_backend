@@ -1,7 +1,7 @@
 const express = require("express");
-const { signup, verifyOtp, resendotp, login, changepassword, facebook_sign } = require("../controllers/User");
+const { signup, verifyOtp, resendotp, login, changepassword, facebook_sign, user_info, is_user } = require("../controllers/User");
 const router = express.Router();
-const {checkRequestBodyParams , validateRequest} = require("../middlewares/validator")
+const {checkRequestBodyParams , validateRequest, checkParam} = require("../middlewares/validator")
 
 //signup
 router.post('/signup',
@@ -56,5 +56,16 @@ router.post('/facebook',
         validateRequest,
         facebook_sign
         )       
+
+router.get('/:id',
+        checkParam('id'),
+        validateRequest,
+        user_info
+        );
+
+router.post('/is_user',
+        checkRequestBodyParams("phone"),
+        is_user
+        );
 
 module.exports = router

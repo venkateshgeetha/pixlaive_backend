@@ -401,3 +401,62 @@ exports.changepassword = async (req, res, next) => {
         });
     }
 }
+
+//Get user info
+exports.user_info = async (req,res,next) => {
+    console.log(req.params);
+    try {       
+        const getUserInfo = await Users.findById({_id:req.params.id});
+        console.log(getUserInfo);
+        if(getUserInfo)
+        {
+            return res.json({
+                success:true,
+                message:"successfully fetched user information"
+            })
+        }
+        else
+        {
+            return res.json({
+                success:false,
+                message:"User not found"
+            });
+        }
+    }
+    catch(error){
+            return res.json({
+                success:false,
+                message:"Error Occured!!!" + error,
+            })
+        }
+}
+
+//is_user
+exports.is_user = async(req,res,next)=>{
+
+    try 
+    {
+        const getUserData = await Users.findOne({phone:req.body.phone});
+        console.log(getUserData);
+        if(getUserData)
+        {
+            return res.json({
+                success:true,
+                message:"successfully fetched user information"
+            })
+        }
+        else
+        {
+            return res.json({
+                success:false,
+                message:"User not found"
+            });
+        }
+    } 
+    catch (error) {
+        return res.json({
+            success:false,
+            message:"Error Occured!!!" + error,
+        })
+    }
+}
