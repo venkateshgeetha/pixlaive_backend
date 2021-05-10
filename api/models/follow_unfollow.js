@@ -2,10 +2,12 @@ const mongoose = require("mongoose");
 
 const follow_unfollow = new mongoose.Schema({
   followerId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref : 'users'
   },
   followingId: {
-      type: String
+      type: mongoose.Schema.Types.ObjectId,
+      ref : 'users'
   },
   status: {
     type: Number, 
