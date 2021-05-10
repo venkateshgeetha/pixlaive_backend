@@ -20,6 +20,10 @@ const postSchema = new mongoose.Schema({
   created_at: {
     type: String,
   },
+  likeCount : {
+    type: Number,
+    default : 0
+  }
 });
 
 module.exports = mongoose.model("Posts", postSchema);

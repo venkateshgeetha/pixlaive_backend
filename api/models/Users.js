@@ -51,7 +51,12 @@ const user_schema = new mongoose.Schema({
         type : Date
     },
     updated_At : {
-        type : Date
+        type : Date,
+        default : ''
+    },
+    facebook_signin : {
+        type : Boolean,
+        default : false
     }
 });
 
