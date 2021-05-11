@@ -1,5 +1,5 @@
 const express = require("express");
-const { signup, verifyOtp, resendotp, login, changepassword, facebook_sign, user_info, is_user, updateProfile } = require("../controllers/User");
+const { signup, verifyOtp, resendotp, login, changepassword, facebook_sign, user_info, is_user, updateProfile, forgotpassword, resetpassword } = require("../controllers/User");
 const router = express.Router();
 const {checkRequestBodyParams , validateRequest, checkParam} = require("../middlewares/validator")
 
@@ -74,4 +74,20 @@ router.put('/updateProfile',
         updateProfile
         )
 
+//reset_passwordstep1
+router.post('/forgotpassword',
+        checkRequestBodyParams('email'),
+        validateRequest,
+        forgotpassword
+        )
+
+//resetPassword
+router.post('/resetPassword',
+        checkRequestBodyParams('user_id'),
+        checkRequestBodyParams('token'),
+        checkRequestBodyParams('password'),
+        checkRequestBodyParams('confirmPassword'),
+        validateRequest,
+        resetpassword
+        )
 module.exports = router

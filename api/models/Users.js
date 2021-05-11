@@ -34,6 +34,10 @@ const user_schema = new mongoose.Schema({
         type : String,
         default : ''
     },
+    passwordResetToken:{
+        type: String,
+        default: ''
+    },
     otp_verified  : {
         type : Boolean,
         default : false

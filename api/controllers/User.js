@@ -501,3 +501,121 @@ exports.updateProfile = async(req,res,next) => {
         })
     }
 }
+
+exports.forgotpassword = async(req,res,next)=>{
+    try
+    {
+    
+        let email = req.body.email;        
+        let getUserInfo = await Users.findOne({email:email});
+        if (getUserInfo) 
+        {
+            let otp = Math.floor(1000 + Math.random() * 9000);
+            let otpExpirationTime = moment().add(5, 'm');
+            const payload = {
+                user: {
+                    id: getUserInfo._id
+                }
+            };
+            const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: "90d" });
+            
+            const data = await Users.findOneAndUpdate({ email: req.body.email},
+                            {
+                                $set: {
+                                    otp:otp,
+                                    otpExpirationTime:otpExpirationTime.toISOString(),
+                                    passwordResetToken:token
+                                }
+                            },{new:true}
+                        );
+            if(data)    
+            {
+                SendEmailVerificationLink(otp,req,data);
+                return res.json({
+                    success: true,
+                    passwordResetToken: data.passwordResetToken,
+                    message: 'OTP has been sent successfully'
+                })
+            } 
+            else
+            {
+                return res.json({
+                    success:false,
+                    message:"user not found"
+                })
+            }                          
+        }
+        else
+        {
+            return res.json({
+                success:false,
+                message:"Error occured"+error
+            })
+        }               
+    }
+    catch(error)
+    {
+        return res.json({
+            success:false,
+            message:"Error occured"+error
+        })
+    }
+}
+
+exports.resetpassword = async(req,res,next)=>{
+    try
+    {
+        let {token,password,confirmPassword}=req.body;
+        let user_id = req.body.user_id;
+        const getUserInfo = await Users.findById({ _id: user_id });
+        
+        if (getUserInfo.passwordResetToken == token) 
+        {
+            if (password == confirmPassword) 
+            {
+                const passwordUpdate = await Users.findByIdAndUpdate({ _id: user_id },
+                    {
+                        $set: {
+                            password: bcrypt.hashSync(password, 12),
+                            passwordResetToken: ''
+                        }
+                    },{new:true}
+                );
+                if(passwordUpdate)
+                {
+                    return res.json({
+                        success:true,
+                        message:"Password changed successfully"
+                    }) 
+                }
+                else
+                {
+                    return res.json({
+                        success:false,
+                        message:"Error occured"+error
+                    })
+                }
+            }
+            else 
+            {
+                return res.json({
+                    success:false,
+                    message:"password must be the same"
+                })
+            }
+        }
+        else 
+        {
+            return res.json({
+                success:false,
+                message:"Token mismatching"
+            })
+        }
+    }
+    catch(error){
+        return res.json({
+            success:false,
+            message:"Error occured"+error
+        })
+    }
+}
