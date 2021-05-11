@@ -11,6 +11,7 @@ var bodyParser = require("body-parser");
 var cors = require("cors");
 var postRouter = require("./api/routes/post.routes");
 const follow_unfollowRouter = require("./api/routes/follow_unfollow");
+const likeRouter = require("./api/routes/like.routes");
 
 app.use(timeout("20s"));
 
@@ -30,6 +31,7 @@ function connectDatabase() {
 app.use('/api/user', userRouter);
 app.use("/api/posts", postRouter);
 app.use('/api/follow_unfollow',follow_unfollowRouter);
+app.use('/api/like',likeRouter);
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));

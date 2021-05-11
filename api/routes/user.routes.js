@@ -1,5 +1,5 @@
 const express = require("express");
-const { signup, verifyOtp, resendotp, login, changepassword, facebook_sign, user_info, is_user } = require("../controllers/User");
+const { signup, verifyOtp, resendotp, login, changepassword, facebook_sign, user_info, is_user, updateProfile } = require("../controllers/User");
 const router = express.Router();
 const {checkRequestBodyParams , validateRequest, checkParam} = require("../middlewares/validator")
 
@@ -67,5 +67,11 @@ router.post('/is_user',
         checkRequestBodyParams("phone"),
         is_user
         );
+
+router.put('/updateProfile',
+        checkRequestBodyParams("user_id"),
+        validateRequest,
+        updateProfile
+        )
 
 module.exports = router

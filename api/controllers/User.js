@@ -460,3 +460,44 @@ exports.is_user = async(req,res,next)=>{
         })
     }
 }
+
+exports.updateProfile = async(req,res,next) => {
+
+    try 
+    {
+       let user_id = req.body.user_id;
+       let editData = {};
+       editData = req.body;
+       editData['updated_At'] = Date.now();
+       console.log("editData",editData);
+       const updateData = await Users.findByIdAndUpdate(
+           {_id:user_id},
+           {
+               $set:editData
+           },
+           {new:true}
+       );
+       if(updateData)
+       {
+        return res.json({
+            success:true,
+            result : updateData,
+            message:"Profile updated successfully"
+        }) 
+       }
+       else
+       {
+        return res.json({
+            success:false,
+            message:"Error occured"+error
+        })
+       }
+    }
+    catch (error) 
+    {
+        return res.json({
+            success:false,
+            message:"Error occured"+error
+        })
+    }
+}
