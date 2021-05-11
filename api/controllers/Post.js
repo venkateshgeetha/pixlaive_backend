@@ -142,4 +142,53 @@ exports.delete_post = async (req, res, next) => {
   }
 };
 
+// Get user feeds using user_id and fix offset
+
+exports.feeds = async (req, res, next) => {
+  try {
+    var { offset, user_id } = req.query;
+    var row = 20;
+    const get_userfeeds = await (await postSchema.find({ user_id: user_id }))
+      .reverse()
+      .splice(offset == undefined ? 0 : offset, row);
+    return res.json({
+      success: true,
+      feeds: get_userfeeds,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: "Error occured! " + error,
+    });
+  }
+};
+
+// ************* get all feed of all users ***********//
+exports.all_feeds = async (req, res, next) => {
+  try {
+    var { offset } = req.query;
+    var row = 20;
+
+    const all_feeds = await postSchema
+      .find()
+      .reverse()
+      .splice(offset == undefined ? 0 : offset, row);
+    return res.json({
+      success: true,
+      feeds: all_feeds,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: "Error occured! " + error,
+    });
+  }
+};
 exports.search_user = async (req, res, next) => {};
+
+// sort by date
+function sortFunction(a, b) {
+  var dateA = new Date(a.date).getTime();
+  var dateB = new Date(b.date).getTime();
+  return dateA > dateB ? 1 : -1;
+}

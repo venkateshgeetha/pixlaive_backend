@@ -11,6 +11,8 @@ const {
   user_posts,
   delete_post,
   search_user,
+  feeds,
+  all_feeds,
 } = require("../controllers/Post");
 
 router.post(
@@ -28,6 +30,14 @@ router.get("/posts/:user_id/", user_posts);
 
 // Delete user Post
 router.post("/delete_post", delete_post);
+
+// get single user feed
+
+router.get("/feeds", feeds);
+
+// Get feed posts
+
+router.get("/all_feeds", all_feeds);
 
 // Search posts auto complete
 router.get("/search_post", search_user);
