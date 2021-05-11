@@ -1,5 +1,7 @@
 const postSchema = require("../models/Post");
 
+// ************* Create post Using user_Id ***************//
+
 exports.create_post = async (req, res, next) => {
   console.log(process.env.JWT_KEY);
   try {
@@ -14,15 +16,12 @@ exports.create_post = async (req, res, next) => {
 
     const saveData = await updateFavourtie.save();
 
-    if (saveData) 
-    {
+    if (saveData) {
       return res.json({
         success: true,
         message: "Post added",
       });
-    } 
-    else 
-    {
+    } else {
       return res.json({
         success: false,
         message: "Error adding post",
@@ -35,6 +34,8 @@ exports.create_post = async (req, res, next) => {
     });
   }
 };
+
+// ************* Get post Using Post_id ***************//
 
 exports.get_post = async (req, res, next) => {
   console.log("enter");
@@ -70,6 +71,8 @@ exports.get_post = async (req, res, next) => {
   }
 };
 
+// ************* Get all post of the user Using user_Id ***************//
+
 exports.user_posts = async (req, res, next) => {
   try {
     const user_id = req.params.user_id;
@@ -102,6 +105,8 @@ exports.user_posts = async (req, res, next) => {
     });
   }
 };
+
+// ************* delete post Using post_ID ***************//
 
 exports.delete_post = async (req, res, next) => {
   console.log(req.body);
