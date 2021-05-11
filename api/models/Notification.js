@@ -17,7 +17,7 @@ const notificationSchema = new mongoose.Schema({
     type: Boolean,
   },
   created_at: {
-    type: String,
+    type: Date,
   },
 });
 

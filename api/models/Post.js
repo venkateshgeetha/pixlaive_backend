@@ -3,27 +3,27 @@ const mongoose = require("mongoose");
 const postSchema = new mongoose.Schema({
   image: {
     type: String,
-    default : ''
+    default: "",
   },
   body: {
     type: String,
-    default: ''
+    default: "",
   },
   user_id: {
     type: String,
-    default : ''
+    default: "",
   },
   url: {
     type: String,
-    default : ''
+    default: "",
   },
   created_at: {
-    type: String,
+    type: Date,
   },
-  likeCount : {
+  likeCount: {
     type: Number,
-    default : 0
-  }
+    default: 0,
+  },
 });
 
 module.exports = mongoose.model("Posts", postSchema);
