@@ -1,5 +1,6 @@
 const follow_unfollow = require("../models/follow_unfollow");
 const Users = require("../models/Users");
+var ObjectId = require("mongodb").ObjectId;
 
 exports.createFollow = async(req,res,next) => {
 
@@ -85,6 +86,54 @@ exports.mutualFriendList = async(req,res,next)=> {
                 message:"Error Occured!!!" + error,
             })
         } 
+    } 
+    catch (error) {
+        return res.json({
+            success:false,
+            message:"Error Occured!!!" + error,
+        })
+    }
+}
+
+exports.get_following = async(req,res,next) => {
+
+    try 
+    {
+        let followerId = req.query.id;
+        let uid = req.query.uid;
+        const getFollowingid = await follow_unfollow.distinct("followingId",{followerId:followerId});
+        console.log(getFollowingid);
+        //getFollowingUserData
+        const getFollowingUserData = await Users.find({_id:{$in:getFollowingid}});
+        //a
+        const a = await follow_unfollow.distinct("followingId",{followerId:uid});
+        //b
+        const b = await follow_unfollow.distinct("followerId",{followingId:uid});
+        const c = a.concat(b);
+        const totalId = c.map(String);
+        // const totalId = [new Set(c)];
+        console.log(totalId);
+        //loop
+        getFollowingUserData.forEach((data)=>{
+            totalId.forEach((followingUserId)=>{
+                // console.log(followingUserId == data._id);
+                if(followingUserId == data._id)
+                {
+                    data["follow"] = true;
+                    // console.log(data.follow);
+                }
+                else
+                {
+                    data["follow"] = false;
+                    // console.log(data.follow);
+                }
+            })  
+        });
+        return res.json({
+            success : true,
+            result : getFollowingUserData
+        })
+    
     } 
     catch (error) {
         return res.json({

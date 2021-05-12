@@ -1,5 +1,5 @@
 const express = require("express");
-const { createFollow, mutualFriendList } = require("../controllers/follow_unfollow");
+const { createFollow, mutualFriendList, get_following } = require("../controllers/follow_unfollow");
 const { checkRequestBodyParams, validateRequest, checkParam, checkQuery } = require("../middlewares/validator");
 const router = express.Router();
 
@@ -15,6 +15,13 @@ router.get('/mutuals',
             checkQuery('uid'),
             validateRequest,
             mutualFriendList
+            )
+
+router.get('/get_following',
+            checkQuery('id'),
+            checkQuery('uid'),
+            validateRequest,
+            get_following
             )
 
 module.exports = router
