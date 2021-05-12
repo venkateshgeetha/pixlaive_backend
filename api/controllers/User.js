@@ -517,7 +517,7 @@ exports.forgotpassword = async(req,res,next)=>{
                     id: getUserInfo._id
                 }
             };
-            const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: "90d" });
+            const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: "10m" });
             
             const data = await Users.findOneAndUpdate({ email: req.body.email},
                             {
