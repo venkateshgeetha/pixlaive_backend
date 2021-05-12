@@ -511,7 +511,7 @@ exports.forgotpassword = async(req,res,next)=>{
         if (getUserInfo) 
         {
             let otp = Math.floor(1000 + Math.random() * 9000);
-            let otpExpirationTime = moment().add(5, 'm');
+            let otpExpirationTime = moment().add(10, 'm');
             const payload = {
                 user: {
                     id: getUserInfo._id
@@ -559,6 +559,77 @@ exports.forgotpassword = async(req,res,next)=>{
             success:false,
             message:"Error occured"+error
         })
+    }
+}
+
+exports.resetPasswordVerifyOtp = async(req,res,next)=>{
+    try
+    {
+        var { token, otp} = req.body;
+        let user_id = req.body.user_id;
+        const verifytoken = jwt.verify(token,process.env.JWT_KEY);
+        if(verifytoken)
+        {
+            const userdetails = await Users.findOne({_id: user_id})
+            if(otp == userdetails.otp)
+            {
+                const updatedetails = await Users.findByIdAndUpdate({ _id: user_id },
+                    {
+                        $set: {
+                            otp:'',
+                            otp_verified : true,
+                            otpExpirationTime : ''
+                        }
+                    },{new:true}
+                );
+                if(updatedetails)
+                {
+                    return res.json({
+                        success:true,
+                        message:"OTP verified successfully"
+                    })
+                }
+                else
+                {
+                     res.json({
+                        success:false,
+                        message:"Error occured"+error
+                    })
+                }
+
+            }
+            else
+            {
+                 res.json({
+                    success: false,
+                    message: 'Incorrect OTP'
+                })
+            }
+        }
+        else
+        {
+            return res.json({
+                success: false,
+                message: 'token expired'
+            })
+            
+        }
+    }
+    catch(error)
+    {
+        if (error.name == 'TokenExpiredError') {
+            return res.json({
+                success: false,
+                message: 'Session expired, resend OTP'
+            });
+        }
+        else
+        {
+            return res.json({
+                success:false,
+                message:"Error occured"+error
+            })
+        }
     }
 }
 

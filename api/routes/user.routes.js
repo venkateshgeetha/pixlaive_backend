@@ -1,5 +1,5 @@
 const express = require("express");
-const { signup, verifyOtp, resendotp, login, changepassword, facebook_sign, user_info, is_user, updateProfile, forgotpassword, resetpassword } = require("../controllers/User");
+const { signup, verifyOtp, resendotp, login, changepassword, facebook_sign, user_info, is_user, updateProfile, forgotpassword, resetpassword, resetPasswordVerifyOtp } = require("../controllers/User");
 const router = express.Router();
 const {checkRequestBodyParams , validateRequest, checkParam} = require("../middlewares/validator")
 
@@ -79,6 +79,14 @@ router.post('/forgotpassword',
         checkRequestBodyParams('email'),
         validateRequest,
         forgotpassword
+        )
+
+//resetPasswordVerifyOtp
+router.post('/resetPasswordVerifyOtp',
+        checkRequestBodyParams('user_id'),
+        checkRequestBodyParams('otp'),
+        checkRequestBodyParams('token'),
+        resetPasswordVerifyOtp
         )
 
 //resetPassword
