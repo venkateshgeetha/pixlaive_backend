@@ -95,50 +95,89 @@ exports.mutualFriendList = async(req,res,next)=> {
     }
 }
 
-exports.get_following = async(req,res,next) => {
-
+exports.get_following = async (req, res, next) => {
     try 
     {
-        let followerId = req.query.id;
-        let uid = req.query.uid;
-        const getFollowingid = await follow_unfollow.distinct("followingId",{followerId:followerId});
-        console.log(getFollowingid);
-        //getFollowingUserData
-        const getFollowingUserData = await Users.find({_id:{$in:getFollowingid}});
-        //a
-        const a = await follow_unfollow.distinct("followingId",{followerId:uid});
-        //b
-        const b = await follow_unfollow.distinct("followerId",{followingId:uid});
-        const c = a.concat(b);
-        const totalId = c.map(String);
-        // const totalId = [new Set(c)];
-        console.log(totalId);
-        //loop
-        getFollowingUserData.forEach((data)=>{
-            totalId.forEach((followingUserId)=>{
-                // console.log(followingUserId == data._id);
-                if(followingUserId == data._id)
-                {
-                    data["follow"] = true;
-                    // console.log(data.follow);
-                }
-                else
-                {
-                    data["follow"] = false;
-                    // console.log(data.follow);
-                }
-            })  
+      const followerId = req.query.id;
+      const uid = req.query.uid;
+   
+      const getFollowingid = await follow_unfollow.distinct("followingId", {
+        followerId: followerId
+      });
+      const getFollowingUserData = await Users.find({
+        _id: { $in: getFollowingid },
+      });
+      const data_follower = await follow_unfollow.distinct("followingId", {
+        followerId: uid,
+      });
+      const data_following = await follow_unfollow.distinct("followerId", {
+        followingId: uid,
+      });
+      const all_ID = data_follower.concat(data_following).map(String);
+      const totalId = [...new Set(all_ID)];
+      console.log(totalId);
+   
+      getFollowingUserData.forEach((data) => {
+        totalId.forEach((followingUserId) => {
+          if (followingUserId == data._id) {
+             data.follow = 1;
+          }
         });
-        return res.json({
-            success : true,
-            result : getFollowingUserData
-        })
-    
+      });
+      return res.json({
+        success: true,
+        result: getFollowingUserData,
+        message: "Successfully fetched following users!"
+      });
     } 
     catch (error) {
-        return res.json({
-            success:false,
-            message:"Error Occured!!!" + error,
-        })
+      return res.json({
+        success: false,
+        message: "Error Occured!!!" + error,
+      });
     }
-}
+  };
+
+  exports.get_followers = async (req, res, next) => {
+    try 
+    {
+      const followingId = req.query.id;
+      const uid = req.query.uid;
+   
+      const getFollowerid = await follow_unfollow.distinct("followerId", {
+        followingId: followingId
+      });
+      console.log(getFollowerid);
+      const getFollowerUserData = await Users.find({
+        _id: { $in: getFollowerid },
+      });
+      const data_follower = await follow_unfollow.distinct("followingId", {
+        followerId: uid,
+      });
+      const data_following = await follow_unfollow.distinct("followerId", {
+        followingId: uid,
+      });
+      const all_ID = data_follower.concat(data_following).map(String);
+      const totalId = [...new Set(all_ID)];
+      console.log(totalId);
+   
+      getFollowerUserData.forEach((data) => {
+        totalId.forEach((followerUserId) => {
+          if (followerUserId == data._id) {
+             data.follow = 1;
+          }
+        });
+      });
+      return res.json({
+        success: true,
+        result: getFollowerUserData,
+        message: "Successfully fetched followers!"
+      });
+    } 
+    catch (error) {
+      return res.json({
+        success: false,
+        message: "Error Occured!!!" + error,
+      });
+    }
+  };

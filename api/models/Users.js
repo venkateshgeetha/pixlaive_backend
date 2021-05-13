@@ -69,6 +69,10 @@ const user_schema = new mongoose.Schema({
     facebook_signin : {
         type : Boolean,
         default : false
+    },
+    follow : {
+        type : Number,
+        default : 0
     }
 });
 
