@@ -184,7 +184,45 @@ exports.all_feeds = async (req, res, next) => {
     });
   }
 };
-exports.search_user = async (req, res, next) => {};
+exports.search_user = async (req, res, next) => {
+  try {
+    const search = req.query.search_word;
+    var reg = new RegExp(search);
+    const all_feeds = await userSchema.find({
+      $or: [{ username: reg }, { first_name: reg }, { email: reg }],
+    });
+    console.log(all_feeds);
+
+    const user_id = req.query.user_id;
+    const data_follower = await followSchema.distinct("followingId", {
+      followerId: user_id,
+    });
+    const data_following = await followSchema.distinct("followerId", {
+      followingId: user_id,
+    });
+    var array3 = data_follower.concat(data_following);
+    var uniq_id = [...new Set(array3)];
+    console.log(uniq_id);
+
+    all_feeds.forEach((data) => {
+      uniq_id.forEach((main_data) => {
+        if (main_data == data.user_id) {
+          data["follow"] = true;
+          console.log(data);
+        }
+      });
+    });
+    return res.json({
+      success: true,
+      feeds: all_feeds,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: "Error occured! " + error,
+    });
+  }
+};
 
 // sort by date
 function sortFunction(a, b) {
