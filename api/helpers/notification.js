@@ -1,6 +1,6 @@
 const Users = require("../models/Users");
 
-module.exports.verifyFCMToken = function(fcmToken) {
+module.exports.verifyGCMToken = function(fcmToken) {
     return admin.messaging().send({
         token: fcmToken
     }, true)
@@ -24,8 +24,8 @@ module.exports.sendNotification = function(sender, receiver, type) {
         message = ' started following you';
     }
     //getUserInfo
-    const receiverInfo = await Users.findById({_id:receiver});
-    const senderInfo = await Users.findById({_id:sender});
+    const receiverInfo = Users.findById({_id:receiver});
+    const senderInfo = Users.findById({_id:sender});
 
     if (receiverInfo && senderInfo) {
         var registrationTokens = [

@@ -3,6 +3,7 @@ const Users = require('../models/Users');
 const bcrypt = require('bcrypt');
 const { SendEmailVerificationLink } = require('../helpers/UniversalFunctions');
 const jwt = require('jsonwebtoken');
+const { verifyGCMToken } = require('../helpers/notification');
 
 //signup
 exports.signup = async(req,res,next) => {
@@ -689,6 +690,60 @@ exports.resetpassword = async(req,res,next)=>{
                 success: false,
                 message: 'Session expired, resend OTP'
             });
+        }
+        else
+        {
+            return res.json({
+                success:false,
+                message:"Error occured"+error
+            })
+        }
+    }
+}
+
+//updateGcmtoken
+exports.gcm_token_updation = async(req,res,next)=>{
+    try{
+        const {token,user_id} = req.body;
+        const verifyToken = verifyGCMToken(token);
+        if(error.name == "ReferenceError")
+        {
+            return res.json({
+                success: false,
+                message: 'registeration token is not valid'
+            }) 
+        }
+        else
+        {
+            const updateGcmtoken = await Users.findByIdAndUpdate({_id:user_id},
+                {
+                    $set:{
+    
+                        gcm_token : token
+                    }
+                },{new:true});
+                if(updateGcmtoken){
+                    return res.json({
+                        success: true,
+                        message:'gcm_token updated'
+                    })
+                }
+                else{
+                    return res.json({
+                        success: false,
+                        message: 'Error'
+                    })
+                }           
+        }
+    }
+    catch(error)
+    {
+        if(error.name == "ReferenceError")
+        {
+            return res.json({
+                success: false,
+                message: 'registeration token is not valid'
+            }) 
         }
         else
         {

@@ -1,5 +1,5 @@
 const express = require("express");
-const { signup, verifyOtp, resendotp, login, changepassword, facebook_sign, user_info, is_user, updateProfile, forgotpassword, resetpassword, resetPasswordVerifyOtp } = require("../controllers/User");
+const { signup, verifyOtp, resendotp, login, changepassword, facebook_sign, user_info, is_user, updateProfile, forgotpassword, resetpassword, resetPasswordVerifyOtp, gcm_token_updation } = require("../controllers/User");
 const router = express.Router();
 const {checkRequestBodyParams , validateRequest, checkParam} = require("../middlewares/validator")
 
@@ -98,4 +98,13 @@ router.post('/resetPassword',
         validateRequest,
         resetpassword
         )
+
+//UpdateGcmtoken
+router.post('/update_gcmToken',
+        checkRequestBodyParams('user_id'),
+        checkRequestBodyParams('token'),
+        validateRequest,
+        gcm_token_updation
+        )
+        
 module.exports = router
