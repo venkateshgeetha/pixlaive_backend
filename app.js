@@ -13,6 +13,14 @@ var postRouter = require("./api/routes/post.routes");
 const follow_unfollowRouter = require("./api/routes/follow_unfollow");
 const likeRouter = require("./api/routes/like.routes");
 
+//firebaseAdmin
+global.admin = require('firebase-admin');
+const serviceAccount = require('./api/serviceAccountkey.json');
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://pixalive-fa208-default-rtdb.firebaseio.com/'
+});
+
 app.use(timeout("20s"));
 
 app.use(bodyParser.json({ limit: "50mb" }));

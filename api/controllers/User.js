@@ -638,9 +638,8 @@ exports.resetpassword = async(req,res,next)=>{
     {
         let {token,password,confirmPassword}=req.body;
         let user_id = req.body.user_id;
-        const getUserInfo = await Users.findById({ _id: user_id });
-        
-        if (getUserInfo.passwordResetToken == token) 
+        const verifytoken = jwt.verify(token,process.env.JWT_KEY);
+        if (verifytoken) 
         {
             if (password == confirmPassword) 
             {
@@ -679,14 +678,24 @@ exports.resetpassword = async(req,res,next)=>{
         {
             return res.json({
                 success:false,
-                message:"Token mismatching"
+                message:"token expired"
             })
         }
     }
-    catch(error){
-        return res.json({
-            success:false,
-            message:"Error occured"+error
-        })
+    catch(error)
+    {
+        if (error.name == 'TokenExpiredError') {
+            return res.json({
+                success: false,
+                message: 'Session expired, resend OTP'
+            });
+        }
+        else
+        {
+            return res.json({
+                success:false,
+                message:"Error occured"+error
+            })
+        }
     }
 }
