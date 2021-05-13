@@ -207,7 +207,7 @@ exports.search_user = async (req, res, next) => {
     all_feeds.forEach((data) => {
       uniq_id.forEach((main_data) => {
         if (main_data == data.user_id) {
-          data["follow"] = true;
+          data.follow = true;
           console.log(data);
         }
       });
