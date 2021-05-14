@@ -145,10 +145,7 @@ exports.all_feeds = async (req, res, next) => {
     var { offset } = req.query;
     var row = 20;
 
-    const all_feeds = await postSchema
-      .find()
-      .reverse()
-      .splice(offset == undefined ? 0 : offset, row);
+    const all_feeds = await (await postSchema.find()).reverse().splice(offset == undefined ? 0 : offset, row);
     return res.json({
       success: true,
       feeds: all_feeds,
