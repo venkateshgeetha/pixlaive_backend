@@ -160,9 +160,9 @@ router.get(
 );
 
 // #1 - Upload avatar
-router.post("/upload_avatar", upload_avatar);
+router.post("/upload_avatar",checkSession, upload_avatar);
 
 // update avatar
-router.post("/change_avatar", change_avatar);
+router.post("/change_avatar",checkSession, change_avatar);
 
 module.exports = router;

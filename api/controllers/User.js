@@ -169,7 +169,7 @@ exports.resendotp = async (req, res, next) => {
       // SendEmailVerificationLink(otp, req, findUserAndUpdate);
       return res.json({
         success: true,
-        message: "New OTP sent successfully to your email",
+        message: "New OTP sent successfully to your Mobile number",
       });
     } else {
       return res.json({

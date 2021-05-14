@@ -14,6 +14,6 @@ if(ENVIRONMENT)
 }
 
 module.exports.SERVER = {
-    MONGODB_URL: "mongodb+srv://pixalive_new:pixalive_new@cluster0.mijs7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-    // MONGODB_URL: "mongodb://localhost:27017/pixalive_db"
+    // MONGODB_URL: "mongodb+srv://pixalive_new:pixalive_new@cluster0.mijs7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+    MONGODB_URL: "mongodb://localhost:27017/pixalive_db"
 }
