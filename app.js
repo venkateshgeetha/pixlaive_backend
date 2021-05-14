@@ -12,22 +12,32 @@ var cors = require("cors");
 var postRouter = require("./api/routes/post.routes");
 const follow_unfollowRouter = require("./api/routes/follow_unfollow");
 const likeRouter = require("./api/routes/like.routes");
+const fileUpload = require("express-fileupload");
 
 //firebaseAdmin
-global.admin = require('firebase-admin');
-const serviceAccount = require('./api/serviceAccountkey.json');
+global.admin = require("firebase-admin");
+const serviceAccount = require("./api/serviceAccountkey.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://pixalive-fa208-default-rtdb.firebaseio.com/'
+  databaseURL: "https://pixalive-fa208-default-rtdb.firebaseio.com/",
 });
 
 app.use(timeout("20s"));
 
+// app.use(express.json({ limit: "50mb" }));
+// app.use(express.urlencoded({ limit: "50mb" }));
+app.use(fileUpload());
 app.use(bodyParser.json({ limit: "50mb" }));
 
 console.log("APP.JS LINE: 17");
 
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+app.use(
+  bodyParser.urlencoded({
+    limit: "50mb",
+    extended: true,
+    parameterLimit: 1000000,
+  })
+);
 
 //DatabaseConnection
 connectDatabase();
@@ -36,10 +46,10 @@ function connectDatabase() {
 }
 
 // router
-app.use('/api/user', userRouter);
+app.use("/api/user", userRouter);
 app.use("/api/posts", postRouter);
-app.use('/api/follow_unfollow',follow_unfollowRouter);
-app.use('/api/like',likeRouter);
+app.use("/api/follow_unfollow", follow_unfollowRouter);
+app.use("/api/like", likeRouter);
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -52,6 +62,7 @@ app.use(haltOnTimedout);
 app.use(cookieParser());
 app.use(haltOnTimedout);
 app.use(cors());
+
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(

@@ -14,6 +14,8 @@ const {
   resetPasswordVerifyOtp,
   gcm_token_updation,
   search_user,
+  upload_avatar,
+  change_avatar,
 } = require("../controllers/User");
 const { checkSession } = require("../middlewares/checkAuth");
 const router = express.Router();
@@ -21,7 +23,7 @@ const {
   checkRequestBodyParams,
   validateRequest,
   checkParam,
-  checkQuery
+  checkQuery,
 } = require("../middlewares/validator");
 
 //signup
@@ -85,9 +87,21 @@ router.post(
   facebook_sign
 );
 
-router.get("/userInfo",checkSession, checkQuery("user_id"), validateRequest, user_info);
+router.get(
+  "/userInfo",
+  checkSession,
+  checkQuery("user_id"),
+  validateRequest,
+  user_info
+);
 
-router.post("/is_user",checkSession, checkRequestBodyParams("phone"),validateRequest, is_user);
+router.post(
+  "/is_user",
+  checkSession,
+  checkRequestBodyParams("phone"),
+  validateRequest,
+  is_user
+);
 
 router.put(
   "/updateProfile",
@@ -137,10 +151,18 @@ router.post(
 );
 
 // Search user
-router.get("/search_user",
-            checkSession,
-            checkQuery("user_id"),
-            checkQuery("search_word"),
-            search_user);
+router.get(
+  "/search_user",
+  checkSession,
+  checkQuery("user_id"),
+  checkQuery("search_word"),
+  search_user
+);
+
+// #1 - Upload avatar
+router.post("/upload_avatar", upload_avatar);
+
+// update avatar
+router.post("/change_avatar", change_avatar);
 
 module.exports = router;

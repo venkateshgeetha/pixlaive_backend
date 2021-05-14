@@ -8,7 +8,6 @@ const { verifyGCMToken } = require("../helpers/notification");
 const twillio = require("../helpers/smsManager");
 let Twillio = new twillio();
 
-
 //signup
 exports.signup = async (req, res, next) => {
   try {
@@ -82,14 +81,14 @@ exports.signup = async (req, res, next) => {
       } else {
         return res.json({
           success: false,
-          message: "Error occured!"+error,
+          message: "Error occured!" + error,
         });
       }
     }
   } catch (error) {
     return res.json({
       success: false,
-      message: "Error occured!"+error
+      message: "Error occured!" + error,
     });
   }
 };
@@ -163,7 +162,10 @@ exports.resendotp = async (req, res, next) => {
       { new: true }
     );
     if (findUserAndUpdate) {
-          Twillio.sendOtp(otp, findUserAndUpdate.country_code + findUserAndUpdate.phone);
+      Twillio.sendOtp(
+        otp,
+        findUserAndUpdate.country_code + findUserAndUpdate.phone
+      );
       // SendEmailVerificationLink(otp, req, findUserAndUpdate);
       return res.json({
         success: true,
@@ -460,7 +462,7 @@ exports.forgotpassword = async (req, res, next) => {
         { new: true }
       );
       if (data) {
-          Twillio.sendOtp(otp, data.country_code + data.phone);
+        Twillio.sendOtp(otp, data.country_code + data.phone);
         // SendEmailVerificationLink(otp, req, data);
         return res.json({
           success: true,
@@ -676,6 +678,63 @@ exports.search_user = async (req, res, next) => {
     return res.json({
       success: true,
       feeds: all_feeds,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: "Error occured! " + error,
+    });
+  }
+};
+
+// upload avatar in user schema
+exports.upload_avatar = async (req, res, next) => {
+  try {
+    const file = req.files.photo;
+    const user_id = req.body.user_id;
+
+    file.mv("./profile_avatar/" + file.name, async function (err, result) {
+      if (err) throw err;
+      const getUserInfoAndUpdate = await Users.findByIdAndUpdate(
+        { _id: user_id },
+        {
+          $set: { avatar: file.name },
+        },
+        { new: true }
+      );
+      res.send({
+        success: true,
+        message: "File uploads",
+      });
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: "Error occured! " + error,
+    });
+  }
+};
+
+// update avatar in user schema
+
+exports.change_avatar = async (req, res, next) => {
+  try {
+    const file = req.files.photo;
+    const user_id = req.body.user_id;
+
+    file.mv("./profile_avatar/" + file.name, async function (err, result) {
+      if (err) throw err;
+      const getUserInfoAndUpdate = await Users.findByIdAndUpdate(
+        { _id: user_id },
+        {
+          $set: { avatar: file.name },
+        },
+        { new: true }
+      );
+      res.send({
+        success: true,
+        message: "File uploads",
+      });
     });
   } catch (error) {
     return res.json({
