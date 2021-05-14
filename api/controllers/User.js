@@ -5,6 +5,9 @@ const bcrypt = require("bcrypt");
 const { SendEmailVerificationLink } = require("../helpers/UniversalFunctions");
 const jwt = require("jsonwebtoken");
 const { verifyGCMToken } = require("../helpers/notification");
+const twillio = require("../helpers/smsManager");
+let Twillio = new twillio();
+
 
 //signup
 exports.signup = async (req, res, next) => {
@@ -19,6 +22,7 @@ exports.signup = async (req, res, next) => {
       last_name,
       avatar,
     } = req.body;
+    let country_code = "+91";
     if (password != confirm_password) {
       return res.json({
         success: false,
@@ -50,13 +54,11 @@ exports.signup = async (req, res, next) => {
     } else {
       let otp = Math.floor(1000 + Math.random() * 9000);
       let otpExpirationTime = moment().add(5, "m");
-      console.log(otp);
-      console.log(otpExpirationTime);
       let userData = {
         username: username,
         email: email,
         password: bcrypt.hashSync(password, 12),
-        country_code: "+91",
+        country_code: country_code,
         phone: phone,
         first_name: first_name,
         last_name: last_name,
@@ -71,22 +73,23 @@ exports.signup = async (req, res, next) => {
       const data = new Users(userData);
       const saveData = await data.save();
       if (saveData) {
-        SendEmailVerificationLink(otp, req, saveData);
+        Twillio.sendOtp(otp, country_code + phone);
+        // SendEmailVerificationLink(otp, req, saveData);
         return res.json({
           success: true,
-          message: "OTP sent successfully to your email",
+          message: "OTP sent successfully to your Phone number",
         });
       } else {
         return res.json({
           success: false,
-          message: "Error occured!",
+          message: "Error occured!"+error,
         });
       }
     }
   } catch (error) {
     return res.json({
       success: false,
-      message: "Error occured!",
+      message: "Error occured!"+error
     });
   }
 };
@@ -97,13 +100,9 @@ exports.verifyOtp = async (req, res, next) => {
     let { user_id, otp } = req.body;
     //getUserInfo
     const getUserInfo = await Users.findById({ _id: user_id });
-    console.log(getUserInfo);
     let otpExpirationTime = getUserInfo.otpExpirationTime;
-    console.log(otpExpirationTime);
     if (moment().isBefore(otpExpirationTime, "second")) {
-      console.log("inside time");
       if (otp == getUserInfo.otp) {
-        console.log("inside otp");
         const updateData = await Users.findByIdAndUpdate(
           { _id: user_id },
           {
@@ -152,7 +151,6 @@ exports.resendotp = async (req, res, next) => {
     let { user_id } = req.body;
     let otp = Math.floor(1000 + Math.random() * 9000);
     let otpExpirationTime = moment().add(5, "m");
-    console.log(otpExpirationTime);
     //findUserAndUpdate
     const findUserAndUpdate = await Users.findByIdAndUpdate(
       { _id: user_id },
@@ -165,7 +163,8 @@ exports.resendotp = async (req, res, next) => {
       { new: true }
     );
     if (findUserAndUpdate) {
-      SendEmailVerificationLink(otp, req, findUserAndUpdate);
+          Twillio.sendOtp(otp, findUserAndUpdate.country_code + findUserAndUpdate.phone);
+      // SendEmailVerificationLink(otp, req, findUserAndUpdate);
       return res.json({
         success: true,
         message: "New OTP sent successfully to your email",
@@ -207,7 +206,6 @@ exports.facebook_sign = async (req, res, next) => {
     const userInfo = await Users.findOne({
       $or: [{ username: username }, { email: email }, { phone: phone }],
     });
-    console.log(userInfo);
     if (userInfo) {
       if (username.toLowerCase() == userInfo.username.toLowerCase()) {
         return res.json({
@@ -268,7 +266,6 @@ exports.login = async (req, res, next) => {
   try {
     let { email, password } = req.body;
     const data = await Users.findOne({ email, otp_verified: true }).exec();
-    console.log(data);
     if (data) {
       const matched = await bcrypt.compare(password, data.password);
       if (!matched) {
@@ -286,7 +283,6 @@ exports.login = async (req, res, next) => {
           expiresIn: "90d",
         });
         if (token) {
-          console.log(token);
           return res.json({
             success: true,
             result: { data, token: token },
@@ -311,7 +307,6 @@ exports.login = async (req, res, next) => {
 //changePassword
 exports.changepassword = async (req, res, next) => {
   try {
-    console.log("cp");
     const { oldpassword, newpassword, confirmpassword, user_id } = req.body;
     //getUserInfo
     const getUserInfo = await Users.findById({ _id: user_id });
@@ -359,13 +354,12 @@ exports.changepassword = async (req, res, next) => {
 
 //Get user info
 exports.user_info = async (req, res, next) => {
-  console.log(req.params);
   try {
-    const getUserInfo = await Users.findById({ _id: req.params.id });
-    console.log(getUserInfo);
+    const getUserInfo = await Users.findById({ _id: req.query.user_id });
     if (getUserInfo) {
       return res.json({
         success: true,
+        result: getUserInfo,
         message: "successfully fetched user information",
       });
     } else {
@@ -386,7 +380,6 @@ exports.user_info = async (req, res, next) => {
 exports.is_user = async (req, res, next) => {
   try {
     const getUserData = await Users.findOne({ phone: req.body.phone });
-    console.log(getUserData);
     if (getUserData) {
       return res.json({
         success: true,
@@ -412,7 +405,6 @@ exports.updateProfile = async (req, res, next) => {
     let editData = {};
     editData = req.body;
     editData["updated_At"] = Date.now();
-    console.log("editData", editData);
     const updateData = await Users.findByIdAndUpdate(
       { _id: user_id },
       {
@@ -468,7 +460,8 @@ exports.forgotpassword = async (req, res, next) => {
         { new: true }
       );
       if (data) {
-        SendEmailVerificationLink(otp, req, data);
+          Twillio.sendOtp(otp, data.country_code + data.phone);
+        // SendEmailVerificationLink(otp, req, data);
         return res.json({
           success: true,
           passwordResetToken: data.passwordResetToken,
@@ -662,7 +655,6 @@ exports.search_user = async (req, res, next) => {
     const all_feeds = await Users.find({
       $or: [{ username: reg }, { first_name: reg }, { email: reg }],
     });
-    console.log(all_feeds);
 
     const user_id = req.query.user_id;
     const data_follower = await followSchema.distinct("followingId", {
@@ -673,13 +665,11 @@ exports.search_user = async (req, res, next) => {
     });
     var array3 = data_follower.concat(data_following);
     var uniq_id = [...new Set(array3)];
-    console.log(uniq_id);
 
     all_feeds.forEach((data) => {
       uniq_id.forEach((main_data) => {
         if (main_data == data.user_id) {
           data.follow = true;
-          console.log(data);
         }
       });
     });

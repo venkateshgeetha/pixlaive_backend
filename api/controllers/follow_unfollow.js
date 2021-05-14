@@ -8,7 +8,6 @@ exports.createFollow = async(req,res,next) => {
     {
         let followerId = req.body.user_id;
         let followingId = req.body.following_id;
-        console.log(followingId);
         const data = new follow_unfollow({
             followerId : followerId,
             followingId : followingId,
@@ -115,7 +114,6 @@ exports.get_following = async (req, res, next) => {
       });
       const all_ID = data_follower.concat(data_following).map(String);
       const totalId = [...new Set(all_ID)];
-      console.log(totalId);
    
       getFollowingUserData.forEach((data) => {
         totalId.forEach((followingUserId) => {
@@ -147,7 +145,6 @@ exports.get_following = async (req, res, next) => {
       const getFollowerid = await follow_unfollow.distinct("followerId", {
         followingId: followingId
       });
-      console.log(getFollowerid);
       const getFollowerUserData = await Users.find({
         _id: { $in: getFollowerid },
       });
@@ -159,7 +156,6 @@ exports.get_following = async (req, res, next) => {
       });
       const all_ID = data_follower.concat(data_following).map(String);
       const totalId = [...new Set(all_ID)];
-      console.log(totalId);
    
       getFollowerUserData.forEach((data) => {
         totalId.forEach((followerUserId) => {

@@ -1,9 +1,11 @@
 const express = require("express");
 const { createFollow, mutualFriendList, get_following, get_followers } = require("../controllers/follow_unfollow");
+const { checkSession } = require("../middlewares/checkAuth");
 const { checkRequestBodyParams, validateRequest, checkParam, checkQuery } = require("../middlewares/validator");
 const router = express.Router();
 
 router.post('/follow',
+            checkSession,
             checkRequestBodyParams('user_id'),
             checkRequestBodyParams('following_id'),
             validateRequest,
@@ -11,6 +13,7 @@ router.post('/follow',
             )
 
 router.get('/mutuals',
+            checkSession,
             checkQuery('id'),
             checkQuery('uid'),
             validateRequest,
@@ -18,6 +21,7 @@ router.get('/mutuals',
             )
 
 router.get('/get_following',
+            checkSession,
             checkQuery('id'),
             checkQuery('uid'),
             validateRequest,
@@ -25,6 +29,7 @@ router.get('/get_following',
             )
 
 router.get('/get_followers',
+            checkSession,
             checkQuery('id'),
             checkQuery('uid'),
             validateRequest,

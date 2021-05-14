@@ -18,9 +18,7 @@ module.exports.SendEmailVerificationLink = function(otp,req,user){
         }
     );
     const template = process.cwd() + '/api/views/emailer.ejs';
-    console.log(template);
     fs.readFile(template, 'utf8', (err, file) => {
-        console.log("inside fs");
         let compiledTmpl = ejs.compile(file, {
             filename: template
         });

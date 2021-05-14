@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   checkRequestBodyParams,
   validateRequest,
+  checkQuery,
 } = require("../middlewares/validator");
 
 const {
@@ -14,29 +15,48 @@ const {
   feeds,
   all_feeds,
 } = require("../controllers/Post");
+const { checkSession } = require("../middlewares/checkAuth");
 
 router.post(
   "/post",
+  checkSession,
   checkRequestBodyParams("user_id"),
+  checkRequestBodyParams("thumbnail"),
+  checkRequestBodyParams("image"),
+  checkRequestBodyParams("body"),
   validateRequest,
   create_post
 );
 
 // Get post by id
-router.get("/post/:post_id", get_post);
+router.get("/getPost",
+          checkSession,
+          checkQuery("post_id"),
+          validateRequest,
+          get_post);
 
 // Get user posts
-router.get("/posts/:user_id/", user_posts);
+router.get("/postbyUid",
+          checkSession,
+          checkQuery("user_id"),
+          validateRequest,
+          user_posts);
 
 // Delete user Post
-router.post("/delete_post", delete_post);
+router.post("/delete_post",
+          checkSession,
+          checkRequestBodyParams("post_id"),
+          validateRequest,
+          delete_post);
 
 // get single user feed
-
-router.get("/feeds", feeds);
+router.get("/feeds",
+          checkSession,
+          checkQuery("user_id"),
+          validateRequest,
+          feeds);
 
 // Get feed posts
-
-router.get("/all_feeds", all_feeds);
+router.get("/all_feeds",checkSession, all_feeds);
 
 module.exports = router;

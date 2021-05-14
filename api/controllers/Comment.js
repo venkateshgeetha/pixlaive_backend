@@ -70,15 +70,13 @@ exports.add_comment = async (req, res, next) => {
 
 exports.getPost_comments = async (req, res, next) => {
   try {
-    const comment_id = req.query;
-    const getcomment = await commentSchema.findOne({ _id: comment_id });
-    console.log(getcomment);
-
+    const post_id = req.query.post_id;
+    const getcomment = await commentSchema.find({ post_id: post_id });
     if (getcomment) {
       res.json({
         success: true,
         result: getcomment,
-        message: "Get comment by post successfully",
+        message: "Comment fetched successfully",
       });
     } else {
       res.json({
@@ -99,8 +97,6 @@ exports.getPost_comments = async (req, res, next) => {
 exports.delete_comment = async (req, res, next) => {
   try {
     let { comment_id, post_id } = req.body;
-
-    console.log(comment_id, post_id);
     // pull out comment
     const comment = await commentSchema.findOneAndDelete({ _id: comment_id });
 

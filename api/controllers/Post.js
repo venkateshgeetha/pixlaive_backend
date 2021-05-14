@@ -3,7 +3,7 @@ const postSchema = require("../models/Post");
 // ************* Create post Using user_Id ***************//
 
 exports.create_post = async (req, res, next) => {
-  console.log(process.env.JWT_KEY);
+
   try {
     let { image, body, thumbnail, user_id } = req.body;
     const updateFavourtie = new postSchema({
@@ -38,20 +38,9 @@ exports.create_post = async (req, res, next) => {
 // ************* Get post Using Post_id ***************//
 
 exports.get_post = async (req, res, next) => {
-  console.log("enter");
   try {
-    const post_id = req.params.post_id;
-    console.log(post_id);
-
-    if (post_id == undefined) {
-      return res.json({
-        success: false,
-        message: "Please insert post id!",
-      });
-    }
-
+    const post_id = req.query.post_id;
     const userPost = await postSchema.findOne({ _id: post_id });
-    console.log(userPost);
     if (userPost) {
       return res.json({
         success: true,
@@ -75,18 +64,8 @@ exports.get_post = async (req, res, next) => {
 
 exports.user_posts = async (req, res, next) => {
   try {
-    const user_id = req.params.user_id;
-    console.log(user_id);
-
-    if (user_id == undefined) {
-      return res.json({
-        success: false,
-        message: "Please insert user id!",
-      });
-    }
-
+    const user_id = req.query.user_id;
     const userPost = await postSchema.find({ user_id: user_id });
-    console.log(userPost);
     if (userPost) {
       return res.json({
         success: true,
@@ -109,10 +88,8 @@ exports.user_posts = async (req, res, next) => {
 // ************* delete post Using post_ID ***************//
 
 exports.delete_post = async (req, res, next) => {
-  console.log(req.body);
   try {
     const post_id = req.body.post_id;
-    console.log(post_id);
 
     if (post_id == undefined) {
       return res.json({
@@ -122,7 +99,6 @@ exports.delete_post = async (req, res, next) => {
     }
 
     const userPost = await postSchema.findOneAndDelete({ _id: post_id });
-    console.log(userPost);
     if (userPost) {
       return res.json({
         success: true,

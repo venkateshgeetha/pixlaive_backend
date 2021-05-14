@@ -15,11 +15,13 @@ const {
   gcm_token_updation,
   search_user,
 } = require("../controllers/User");
+const { checkSession } = require("../middlewares/checkAuth");
 const router = express.Router();
 const {
   checkRequestBodyParams,
   validateRequest,
   checkParam,
+  checkQuery
 } = require("../middlewares/validator");
 
 //signup
@@ -61,6 +63,7 @@ router.post(
 
 router.post(
   "/changepassword",
+  checkSession,
   checkRequestBodyParams("user_id"),
   checkRequestBodyParams("oldpassword"),
   checkRequestBodyParams("newpassword"),
@@ -82,12 +85,13 @@ router.post(
   facebook_sign
 );
 
-router.get("/:id", checkParam("id"), validateRequest, user_info);
+router.get("/userInfo",checkSession, checkQuery("user_id"), validateRequest, user_info);
 
-router.post("/is_user", checkRequestBodyParams("phone"), is_user);
+router.post("/is_user",checkSession, checkRequestBodyParams("phone"),validateRequest, is_user);
 
 router.put(
   "/updateProfile",
+  checkSession,
   checkRequestBodyParams("user_id"),
   validateRequest,
   updateProfile
@@ -107,6 +111,7 @@ router.post(
   checkRequestBodyParams("user_id"),
   checkRequestBodyParams("otp"),
   checkRequestBodyParams("token"),
+  validateRequest,
   resetPasswordVerifyOtp
 );
 
@@ -124,13 +129,18 @@ router.post(
 //UpdateGcmtoken
 router.post(
   "/update_gcmToken",
+  checkSession,
   checkRequestBodyParams("user_id"),
   checkRequestBodyParams("token"),
   validateRequest,
   gcm_token_updation
 );
 
-// Search posts auto complete
-router.get("/search_user", search_user);
+// Search user
+router.get("/search_user",
+            checkSession,
+            checkQuery("user_id"),
+            checkQuery("search_word"),
+            search_user);
 
 module.exports = router;
