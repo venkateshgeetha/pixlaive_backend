@@ -1,4 +1,4 @@
-const commentSchema = require("../models/comments");
+const commentSchema = require("../models/Comment");
 const postSchema = require("../models/Post");
 const notificationSchema = require("../models/Notification");
 
@@ -96,7 +96,7 @@ exports.getPost_comments = async (req, res, next) => {
 
 exports.delete_comment = async (req, res, next) => {
   try {
-    let { comment_id, post_id } = req.body;
+    let { comment_id} = req.body;
     // pull out comment
     const comment = await commentSchema.findOneAndDelete({ _id: comment_id });
 

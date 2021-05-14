@@ -652,33 +652,45 @@ exports.gcm_token_updation = async (req, res, next) => {
 
 exports.search_user = async (req, res, next) => {
   try {
-    const search = req.query.search_word;
-    var reg = new RegExp(search);
+    let search = req.query.search_word || '' ;
+    // var reg = new RegExp(search);
     const all_feeds = await Users.find({
-      $or: [{ username: reg }, { first_name: reg }, { email: reg }],
+      $or: [{ username: new RegExp(".*" + search + ".*", "i") },
+            { first_name: new RegExp(".*" + search + ".*", "i") },
+             { email: new RegExp(".*" + search + ".*", "i") }],
     });
-
-    const user_id = req.query.user_id;
-    const data_follower = await followSchema.distinct("followingId", {
-      followerId: user_id,
-    });
-    const data_following = await followSchema.distinct("followerId", {
-      followingId: user_id,
-    });
-    var array3 = data_follower.concat(data_following);
-    var uniq_id = [...new Set(array3)];
-
-    all_feeds.forEach((data) => {
-      uniq_id.forEach((main_data) => {
-        if (main_data == data.user_id) {
-          data.follow = true;
-        }
+    console.log(all_feeds);
+    if(all_feeds)
+    {
+      const user_id = req.query.user_id;
+      const data_follower = await followSchema.distinct("followingId", {
+        followerId: user_id,
       });
-    });
-    return res.json({
-      success: true,
-      feeds: all_feeds,
-    });
+      const data_following = await followSchema.distinct("followerId", {
+        followingId: user_id,
+      });
+      var array3 = data_follower.concat(data_following);
+      var uniq_id = [...new Set(array3)];
+  
+      all_feeds.forEach((data) => {
+        uniq_id.forEach((main_data) => {
+          if (main_data == data.user_id) {
+            data.follow = true;
+          }
+        });
+      });
+      return res.json({
+        success: true,
+        feeds: all_feeds,
+      });
+    }
+    else
+    {
+      return res.json({
+        success: false,
+        message: "user not found "
+      });
+    }
   } catch (error) {
     return res.json({
       success: false,

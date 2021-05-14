@@ -143,7 +143,7 @@ router.post(
 //UpdateGcmtoken
 router.post(
   "/update_gcmToken",
-  checkSession,
+  // checkSession,
   checkRequestBodyParams("user_id"),
   checkRequestBodyParams("token"),
   validateRequest,

@@ -26,7 +26,6 @@ router.get("/getpost_comments",
 router.post("/delete_comment",
             checkSession,
             checkRequestBodyParams("comment_id"),
-            checkRequestBodyParams("post_id"),
             validateRequest,
             delete_comment);
 

@@ -12,6 +12,7 @@ var cors = require("cors");
 var postRouter = require("./api/routes/post.routes");
 const follow_unfollowRouter = require("./api/routes/follow_unfollow");
 const likeRouter = require("./api/routes/like.routes");
+const commentRouter = require("./api/routes/comment.routes");
 const fileUpload = require("express-fileupload");
 
 //firebaseAdmin
@@ -50,6 +51,7 @@ app.use("/api/user", userRouter);
 app.use("/api/posts", postRouter);
 app.use("/api/follow_unfollow", follow_unfollowRouter);
 app.use("/api/like", likeRouter);
+app.use("/api/comments", commentRouter);
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
