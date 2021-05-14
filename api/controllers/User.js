@@ -652,12 +652,10 @@ exports.gcm_token_updation = async (req, res, next) => {
 
 exports.search_user = async (req, res, next) => {
   try {
-    let search = req.query.search_word || '' ;
-    // var reg = new RegExp(search);
+    const search = req.query.search_word;
+    var reg = new RegExp(search);
     const all_feeds = await Users.find({
-      $or: [{ username: new RegExp(".*" + search + ".*", "i") },
-            { first_name: new RegExp(".*" + search + ".*", "i") },
-             { email: new RegExp(".*" + search + ".*", "i") }],
+      $or: [{ username: reg }, { first_name: reg }, { email: reg }],
     });
     console.log(all_feeds);
     if(all_feeds)
