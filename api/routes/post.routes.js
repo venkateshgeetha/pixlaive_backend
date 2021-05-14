@@ -39,7 +39,4 @@ router.get("/feeds", feeds);
 
 router.get("/all_feeds", all_feeds);
 
-// Search posts auto complete
-router.get("/search_post", search_user);
-
 module.exports = router;
