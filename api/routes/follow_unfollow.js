@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.post('/follow',
             checkSession,
+            checkRequestBodyParams('type').isIn(['1', '0']),
             checkRequestBodyParams('user_id'),
             checkRequestBodyParams('following_id'),
             validateRequest,

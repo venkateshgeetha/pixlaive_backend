@@ -6,8 +6,10 @@ exports.createFollow = async(req,res,next) => {
 
     try
     {
-        let followerId = req.body.user_id;
-        let followingId = req.body.following_id;
+      let followerId = req.body.user_id;
+      let followingId = req.body.following_id;
+        if(req.body.type == 1)
+        {          
         const data = new follow_unfollow({
             followerId : followerId,
             followingId : followingId,
@@ -36,6 +38,32 @@ exports.createFollow = async(req,res,next) => {
                     message:"successfully followed"
                 })
             }
+        }
+        }
+        else if(req.body.type == 0)
+        {
+          const unfollow = await follow_unfollow.findOneAndDelete(
+            {followerId : followerId,
+            followingId : followingId});
+          //decrease followingCount
+          const updateFollowingCount = await Users.updateOne(
+            {_id : followerId},
+            {$inc : {followingCount : -1}},
+            {new : true}
+        );
+          //decrease followerCount
+          const updateFollowerCount = await Users.updateOne(
+              {_id : followingId},
+              {$inc : {followersCount : -1}},
+              {new : true}
+          );
+          if(updateFollowingCount && updateFollowerCount)
+          {
+              return res.json({
+                  success:true,
+                  message:"successfully unfollowed"
+              })
+          }
         }
     }
     catch(error)
